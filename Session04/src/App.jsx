@@ -11,10 +11,12 @@ import Bai7 from "./Btvn/Bai7";
 import Bai8 from "./Btvn/Bai8";
 import Bai9 from "./Btvn/Bai9";
 import Bai10 from "./Btvn/Bai10";
+import Bai12 from "./Btvn/baitap12/Bai12";
 
 function App() {
   return (
     <>
+      <Bai12 />
       <Baitap11 />
       <Bai5 />
       <Bai7 />
