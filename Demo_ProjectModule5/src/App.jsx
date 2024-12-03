@@ -1,12 +1,9 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import Header from "./component/pages/Header";
 import { Route, Routes } from "react-router-dom";
-import HomePage from "./component/pages/HomePage";
-import Shop from "./component/pages/Shop";
-import AboutUs from "./component/pages/AboutUs";
-import SlideHero from "./component/pages/SlideHero";
+import HomePage from "./pages/user/HomePage";
+import Shop from "./pages/user/Shop";
+import AboutUs from "./pages/user/AboutUs";
+import { Header } from "antd/es/layout/layout";
+import SlideHero from "./layout/SlideHero";
 
 function App() {
   return (

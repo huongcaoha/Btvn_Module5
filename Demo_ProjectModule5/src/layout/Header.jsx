@@ -59,6 +59,9 @@ export default function Header() {
         <li className="hover:text-[#df09b2]">
           <Link to="/about">About us</Link>
         </li>
+        <li className="hover:text-[#df09b2]">
+          <Link to="/login">Login</Link>
+        </li>
       </ul>
     </div>
   );
