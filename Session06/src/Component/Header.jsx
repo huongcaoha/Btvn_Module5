@@ -1,12 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { IoMdCart } from "react-icons/io";
 import ListCart from "./ListCart";
+import { cartContex } from "../provider/GlobalState";
 
 export default function Header() {
   const [isShowCart, setIsShowCart] = useState(false);
-  const refCart = useRef(null);
-
-  const handleClickOutside = (event) => {};
+  const { carts } = useContext(cartContex);
+  const totalProduct = carts.reduce(
+    (pre, current) => pre + current.quantity,
+    0
+  );
 
   const handleTogger = () => {
     setIsShowCart(!isShowCart);
@@ -25,9 +28,9 @@ export default function Header() {
           className="cursor-pointer hover:text-blue-300 transition-all"
         />
         <div className="absolute top-[-8px] right-[-10px] text-[12px] px-1 bg-red-500 rounded-lg l">
-          10
+          {totalProduct}
         </div>
-        {isShowCart ? <ListCart ref={refCart} /> : <></>}
+        {isShowCart ? <ListCart /> : <></>}
       </div>
     </header>
   );

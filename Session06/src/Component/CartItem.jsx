@@ -1,27 +1,52 @@
-import { Button, Image } from "antd";
-import React from "react";
+import { Button, Image, Modal } from "antd";
+import React, { useContext, useState } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { cartContex } from "../provider/GlobalState";
 
-export default function CartItem() {
+export default function CartItem({ item }) {
+  const { downCart, upCart, deleteItem } = useContext(cartContex);
+  const [isShowModal, setIsShowModal] = useState(false);
+
+  const handleOk = (id) => {
+    deleteItem(id);
+    setIsShowModal(false);
+  };
+
+  const handleCancel = () => {
+    setIsShowModal(false);
+  };
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between m-6">
         <div className="flex items-center gap-5">
           <Image
             height={50}
             width={50}
             className="rounded-full"
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR--APtc5Nnz3w43NQTVrDCon1p33k9xWBgGg&s"
+            src={item.image}
           />
-          <p>Gái xinh</p>
+          <p>{item.productName}</p>
         </div>
 
         <div className="flex items-center gap-3">
-          <Button size="small">-</Button>
-          <span>10</span>
-          <Button size="small">+</Button>
-          <FaRegTrashAlt />
+          <Button onClick={() => downCart(item.id)} size="small">
+            -
+          </Button>
+          <span>{item.quantity}</span>
+          <Button onClick={() => upCart(item.id)} size="small">
+            +
+          </Button>
+          <FaRegTrashAlt onClick={() => setIsShowModal(true)} />
         </div>
+
+        <Modal
+          title="Xác nhận xóa"
+          open={isShowModal}
+          onOk={() => handleOk(item.id)}
+          onCancel={handleCancel}
+        >
+          <p>Bạn muốn xóa sản phẩm này khỏi giỏ hàng chứ ?</p>
+        </Modal>
       </div>
     </>
   );

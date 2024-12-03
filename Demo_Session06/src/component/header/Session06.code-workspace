@@ -1,0 +1,14 @@
+{
+  "folders": [
+	{
+		"path": "../../../../Session06"
+	},
+	{
+		"path": "../../.."
+	}
+],
+  "settings": {
+    "liveServer.settings.multiRootWorkspaceName": "Session02",
+    "liveServer.settings.port": 5501
+  }
+}
