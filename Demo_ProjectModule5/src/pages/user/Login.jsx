@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import { Button, Input, message } from "antd";
 
@@ -6,12 +6,15 @@ import { Cookies } from "react-cookie";
 import Header from "../../layout/Header";
 import { baseUrl } from "../../apis/instant";
 import { useNavigate } from "react-router-dom";
+import { MyContext } from "../GlobalContext";
 
 export default function Login() {
   const [user, setUser] = useState({
     username: "",
     password: "",
   });
+
+  const { whoAreYou, setValueWhoAreYou } = useContext(MyContext);
 
   const resetUser = () => {
     setUser({
@@ -47,8 +50,9 @@ export default function Login() {
             return;
           }
         });
+        setValueWhoAreYou(roles.map((role) => role.roleName));
       } catch (error) {
-        console.log(error);
+        message.error("Login error");
       }
     };
     login();

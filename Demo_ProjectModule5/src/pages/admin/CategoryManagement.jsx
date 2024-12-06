@@ -7,8 +7,8 @@ export default function CategoryManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isShowForm, setIsShowForm] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
+  const [totalPage, setTotalPage] = useState(1);
   const [category, setCategory] = useState({
-    id: "",
     categoryName: "",
     description: "",
     status: true,
@@ -21,46 +21,82 @@ export default function CategoryManagement() {
   });
 
   const checkBlank = () => {
+    let rs = false;
     if (!category.categoryName) {
-      setCategory({
+      setCategoryMessage({
         ...categoryMessage,
         categoryNameMessage: "Category name can not blank",
       });
-      return true;
+      rs = true;
+    } else {
+      setCategoryMessage({
+        ...categoryMessage,
+        categoryNameMessage: "",
+      });
     }
     if (!category.description) {
-      setCategory({
-        ...categoryMessage,
-        descriptionMessage: "Description can not blank",
+      setCategoryMessage((pre) => {
+        return { ...pre, descriptionMessage: "Description can not blank" };
       });
-      return true;
+      rs = true;
+    } else {
+      setCategoryMessage((pre) => {
+        return { ...pre, descriptionMessage: "" };
+      });
     }
-    return false;
+    return rs;
   };
 
   const handleChangeInput = (e) => {
     const { name, value } = e.target;
     setCategory((pre) => ({ ...pre, [name]: value }));
+    checkBlank();
   };
 
   const getListCategory = async () => {
     try {
       const response = await baseUrl.get(
-        "api.myService.com/v1/admin/categories"
+        `api.myService.com/v1/admin/categories?page=${currentPage - 1}`
       );
+
+      setTotalPage(response.data.totalPage);
       const newCategories = response.data.categories;
       setCategories(newCategories.map((cate) => ({ ...cate, key: cate.id })));
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      console.log("Error fetching categories:", error);
     }
   };
 
   useEffect(() => {
     getListCategory();
-  }, []);
+  }, [currentPage]);
 
   const handleTableChange = (pagination) => {
-    setCurrentPage(pagination.current); // Cập nhật trang hiện tại
+    setCurrentPage(pagination); // Cập nhật trang hiện tại
+  };
+
+  const deleteCategory = (id) => {
+    const response = baseUrl.delete(
+      `api.myService.com/v1/admin/categories/${id}`
+    );
+    if (response) {
+      message.success("delete success");
+    }
+    setCurrentPage(0);
+  };
+
+  const showConfirm = (id) => {
+    Modal.confirm({
+      title: "Xác Nhận Xóa",
+      content: "Bạn có chắc chắn muốn xóa mục này?",
+      okText: "Có",
+      okType: "danger",
+      cancelText: "Không",
+      onOk() {
+        deleteCategory(id);
+      },
+      onCancel() {},
+    });
   };
 
   const columns = [
@@ -91,7 +127,7 @@ export default function CategoryManagement() {
       render: (_, record) => (
         <div className="flex gap-3">
           <Button type="primary">Edit</Button>
-          <Button type="default" danger>
+          <Button onClick={() => showConfirm(record.id)} type="default" danger>
             Delete
           </Button>
         </div>
@@ -106,16 +142,20 @@ export default function CategoryManagement() {
   const closeForm = () => {
     setIsShowForm(false);
     setCategory({
-      id: "",
       categoryName: "",
       description: "",
       status: true,
+    });
+
+    setCategoryMessage({
+      categoryName: "",
+      description: "",
     });
   };
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
-    if (checkBlank) {
+    if (checkBlank()) {
       message.error("Create category error");
     } else {
       try {
@@ -126,6 +166,7 @@ export default function CategoryManagement() {
         if (response) {
           message.success("Create category success");
           getListCategory();
+          closeForm();
         }
       } catch (error) {
         message.error("create category error");
@@ -149,8 +190,15 @@ export default function CategoryManagement() {
         className="w-[80%] m-auto"
         dataSource={categories}
         columns={columns}
-        pagination={{ pageSize: 5 }}
-        onChange={handleTableChange}
+        pagination={{
+          total: totalPage * 5, // Giả sử mỗi trang có 10 bản ghi
+          current: currentPage, // Trang hiện tại
+          pageSize: 5, // Số bản ghi trên mỗi trang
+          onChange: (page) => {
+            handleTableChange(page);
+          },
+        }}
+        // onChange={handleTableChange}
       />
 
       <Modal
@@ -170,6 +218,13 @@ export default function CategoryManagement() {
               name="categoryName"
               onChange={(e) => handleChangeInput(e)}
             ></Input>
+            {categoryMessage.categoryNameMessage ? (
+              <p className="text-red-600">
+                {categoryMessage.categoryNameMessage}
+              </p>
+            ) : (
+              <></>
+            )}
           </div>
 
           <div>
@@ -179,6 +234,13 @@ export default function CategoryManagement() {
               name="description"
               onChange={(e) => handleChangeInput(e)}
             ></Input>
+            {categoryMessage.descriptionMessage ? (
+              <p className="text-red-600">
+                {categoryMessage.descriptionMessage}
+              </p>
+            ) : (
+              <></>
+            )}
           </div>
 
           <div>
