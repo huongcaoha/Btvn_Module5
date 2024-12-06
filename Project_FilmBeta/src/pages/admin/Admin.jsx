@@ -1,8 +1,9 @@
 import React from "react";
 
 import { Outlet } from "react-router-dom";
-import HeaderAdmin from "../layout/HeaderAdmin";
-import SideBar from "../layout/SideBar";
+
+import SideBar from "../../layout/SideBar";
+import HeaderAdmin from "../../layout/HeaderAdmin";
 
 export default function Admin() {
   return (
